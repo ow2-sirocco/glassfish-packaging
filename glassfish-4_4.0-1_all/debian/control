@@ -1,0 +1,11 @@
+Source: glassfish-4
+Section: misc
+Priority: optional
+Maintainer: Gregoire Lejeune <gregoire.lejeune@enovance.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.4
+
+Package: glassfish-4
+Architecture: all
+Depends: openjdk-7-jdk
+Description: GlassFish 4.0 server

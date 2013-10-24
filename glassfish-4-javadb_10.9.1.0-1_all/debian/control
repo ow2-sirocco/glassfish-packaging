@@ -1,0 +1,11 @@
+Source: glassfish-4-javadb
+Section: misc
+Priority: optional
+Maintainer: Gregoire Lejeune <gregoire.lejeune@enovance.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.4
+
+Package: glassfish-4-javadb
+Architecture: all
+Depends: openjdk-7-jdk, glassfish-4 (>= 4.0)
+Description: JavaDB for GlassFish 4.0 server

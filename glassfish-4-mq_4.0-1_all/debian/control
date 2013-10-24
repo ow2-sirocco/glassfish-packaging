@@ -1,0 +1,11 @@
+Source: glassfish-4-mq
+Section: misc
+Priority: optional
+Maintainer: Gregoire Lejeune <gregoire.lejeune@enovance.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.4
+
+Package: glassfish-4-mq
+Architecture: all
+Depends: openjdk-7-jdk, glassfish-4 (>= 4.0)
+Description: MQ for GlassFish 4.0 server

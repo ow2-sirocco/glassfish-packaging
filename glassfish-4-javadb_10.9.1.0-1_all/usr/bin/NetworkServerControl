@@ -1,0 +1,96 @@
+#!/bin/sh
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+
+#   http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+DERBY_HOME=/usr/share/javadb
+
+# set DERBY_LIB location
+DERBY_LIB="${DERBY_HOME}/lib"
+
+if [ -z "$JAVACMD" ] ; then
+  if [ -n "$JAVA_HOME"  ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+      # IBM's JDK on AIX uses strange locations for the executables
+      JAVACMD="$JAVA_HOME/jre/sh/java"
+    else
+      JAVACMD="$JAVA_HOME/bin/java"
+    fi
+  else
+    JAVACMD=`which java 2> /dev/null `
+    if [ -z "$JAVACMD" ] ; then
+        JAVACMD=java
+    fi
+  fi
+fi
+
+if [ ! -x "$JAVACMD" ] ; then
+  echo "Error: JAVA_HOME is not defined correctly."
+  echo "  We cannot execute $JAVACMD"
+  exit 1
+fi
+
+# set local classpath, don't overwrite the user's
+LOCALCLASSPATH=$DERBY_LIB/derby.jar:$DERBY_LIB/derbynet.jar:$DERBY_LIB/derbytools.jar:$DERBY_LIB/derbyclient.jar
+
+# if CLASSPATH_OVERRIDE env var is set, LOCALCLASSPATH will be
+# user CLASSPATH first and derby-found jars after.
+# In that case, the user CLASSPATH will override derby-found jars
+#
+# if CLASSPATH_OVERRIDE is not set, we'll have the normal behaviour
+# with derby-found jars first and user CLASSPATH after
+if [ -n "$CLASSPATH" ] ; then
+  # merge local and specified classpath 
+  if [ -z "$LOCALCLASSPATH" ] ; then 
+    LOCALCLASSPATH="$CLASSPATH"
+  elif [ -n "$CLASSPATH_OVERRIDE" ] ; then
+    LOCALCLASSPATH="$CLASSPATH:$LOCALCLASSPATH"
+  else
+    LOCALCLASSPATH="$LOCALCLASSPATH:$CLASSPATH"
+  fi
+
+  # remove class path from launcher -cp option
+  CLASSPATH=""
+fi
+
+# Readjust classpath for MKS
+# expr match 
+if [ \( "`expr $SHELL : '.*sh.exe$'`" -gt 0 \) -a \( "$cygwin" = "false" \) ]; then
+  LOCALCLASSPATH=`echo $LOCALCLASSPATH | sed -E 's/([\d\w]*):([\d\w]*)/\1;\2/g
+'`
+fi
+#!/bin/sh
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+
+#   http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+derby_exec_command="exec \"$JAVACMD\" $DERBY_OPTS -classpath \"$LOCALCLASSPATH\" org.apache.derby.drda.NetworkServerControl $@"
+eval $derby_exec_command
